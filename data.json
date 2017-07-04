@@ -1,0 +1,30 @@
+{
+  "article_list" : {
+    "article-1" : {
+      "value" : true
+    },
+    "article-2" : {
+      "value" : true
+    },
+    "article-3" : {
+      "value" : true
+    }
+  },
+  "articles" : {
+    "article-1" : {
+      "body" : "This is the body",
+      "by" : "TJ Monserrat",
+      "title" : "This is an Article. "
+    },
+    "article-2" : {
+      "body" : "this is the body of that article",
+      "by" : "TJ Monserrat",
+      "title" : "This is another article"
+    },
+    "article-3" : {
+      "body" : "and yet another body",
+      "by" : "TJ Monserrat",
+      "title" : "And yet another article"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+// Put your variables for Project Nice here
+
+// Colors
+//
+// Grayscale and brand colors for use across Bootstrap.
+
+$light:                     #ffffff !default;
+$dark:                      #000000 !default;
+
+$gray-dark:                 #373a3c !default;
+$gray:                      #55595c !default;
+$gray-light:                #818a91 !default;
+$gray-lighter:              #eceeef !default;
+$gray-lightest:             #f7f7f9 !default;
+
+$brand-primary:             #0275d8 !default;
+$brand-success:             #5cb85c !default;
+$brand-info:                #5bc0de !default;
+$brand-warning:             #f0ad4e !default;
+$brand-danger:              #d9534f !default;
+$brand-inverse:             $gray-dark !default;
+
+// Components
+// Navigation Header Component
+$navigation-header-height: 100px;
+$navigation-header-margin-left: 80px;
+
+// Grid breakpoints
+//
+// Define the minimum dimensions at which your layout will change,
+// adapting to different screen sizes, for use in media queries.
+
+// coming from https://medium.freecodecamp.com/the-100-correct-way-to-do-css-breakpoints-88d6a5ba1862#.1va74mfnp
+
+$grid-breakpoints: (
+  phone: 600px,
+  tabletportrait: 900px,
+  tabletlandscape: 1200px,
+  desktop: 1800px
+) !default;

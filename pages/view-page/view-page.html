@@ -1,0 +1,29 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/pwa-15-article/pwa-15-article.html">
+
+<dom-module id="view-page">
+  <template>
+    <style is="custom-style">
+      :host {
+        display: block;
+        padding: 20px;
+      }
+      
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+
+    <template is="dom-if" if="[[params.id]]">
+      <pwa-15-article article-id="[[params.id]]" user="[[user]]"></pwa-15-article>
+    </template>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'view-page'
+    });
+  </script>
+</dom-module>

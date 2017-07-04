@@ -1,0 +1,65 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../web-components/pwa-15-summary/pwa-15-summary.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!-- Style dependency -->
+<link rel="import" href="home-page-style.html">
+
+<dom-module id="home-page">
+  <template>
+    <style is="custom-style" include="home-page-style iron-flex iron-flex-alignment">
+       :host {
+        display: block;
+      }
+      /*#newfeed{
+        margin-top:30px;
+        width:50%;
+        margin-left:300px;
+        margin-bottom:50px;
+      }*/
+    </style>
+
+    <!--<firebase-query id="query"
+      path="/article_list"
+      data="{{articles}}"
+    ></firebase-query>-->
+
+    <firebase-query id="query" path="/articles" data="{{articles}}"></firebase-query>
+    
+
+    <firebase-auth user="{{user}}"></firebase-auth>
+
+    <!--<paper-dialog opened><h2>Header</h2></paper-dialog>-->
+
+    <div class="vertical layout">
+      <paper-input id="input" class="flex" placeholder="What's on your mind"> </paper-input>
+      <paper-input id="input1" class="flex" placeholder="What's Really on your mind"></paper-input>
+      <paper-button class="flex" id="post" on-tap="add" raised>POST</paper-button>
+    </div>
+
+    <template is="dom-repeat" items="[[articles]]">
+      <pwa-15-summary article-id="[[item.$key]]"></pwa-15-summary>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'home-page',
+      add: function () {
+        this.$.query.ref.push({
+          title: this.$.input.value,
+          body: this.$.input1.value
+          // userID:this.$.user.uid
+        });
+        this.$.input1.value = null;
+        this.$.input.value = null;
+      }
+    });
+  </script>
+</dom-module>

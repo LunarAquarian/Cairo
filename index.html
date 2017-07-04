@@ -1,0 +1,313 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <!-- TITLE START -->
+  <title>cairo</title>
+  <!-- TITLE ENDS -->
+
+  <!-- DESCRIPTION START -->
+  <meta name="description" content="This is a brief description of the Little Qairoes Project">
+  <!-- DESCRIPTION END -->
+
+  <link rel="icon" href="/images/favicon.ico">
+
+  <!-- See https://goo.gl/OOhYW5 -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- See https://goo.gl/qRE0vM -->
+  <meta name="theme-color" content="#3f51b5">
+
+  <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- CHROME TITLE STARTS -->
+  <meta name="application-name" content="cairo">
+  <!-- CHROME TITLE ENDS -->
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- IOS TITLE STARTS -->
+  <meta name="apple-mobile-web-app-title" content="cairo">
+  <!-- IOS TITLE ENDS -->
+
+  <!-- Homescreen icons -->
+  <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/icon-96x96.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/icon-192x192.png">
+
+  <!-- Tile icon for Windows 8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#3f51b5">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <script>
+    window.CAIRO = window.CAIRO || {};
+    window.PREFIX = '/';
+
+    window.CAIRO.LoaderMessagesIndex = 2;
+    window.CAIRO.LoaderMessages = [
+      'Might be the network...',
+      'If you are using Safari 9, you might need to update it to the latest version...',
+      'If you are using a lower version of Firefox or Chrome, please update it above version 30...',
+      'Nuninuninuninu...',
+      'We haven\'t tested this yet on IE 8... so, give us as a holler if you see this (and you are on IE 10 below)...',
+      'Please wait...',
+      'Why is the network so slow today???'
+    ]
+    window.RavenLoaderMessages = [];
+
+    window.CAIRO.LoaderTimerShort = setTimeout(function () {
+      window.CAIRO.LoaderText = document.getElementById('loader-text');
+      window.CAIRO.LoaderText.innerHTML = 'Might be the network...'
+    }, 6000);
+
+    window.CAIRO.LoaderTimerShorter = setTimeout(function () {
+      window.CAIRO.LoaderText = document.getElementById('loader-text');
+      window.CAIRO.LoaderText.innerHTML = 'Please wait...'
+    }, 14000);
+
+    window.CAIRO.LoaderTimer = setTimeout(function () {
+      console.log('Really slow network here')
+      RavenLoaderMessages.push('Really slow network here');
+      window.CAIRO.LoaderText.innerHTML = 'If you are using Safari 9, you might need to update it to the latest version...';
+      window.slowNetwork = new Date();
+
+      window.CAIRO.LoaderMessagesInterval = setInterval(function () {
+        window.CAIRO.LoaderText.innerHTML = window.CAIRO.LoaderMessages[window.CAIRO.LoaderMessagesIndex];
+        window.CAIRO.LoaderMessagesIndex++;
+        if (window.CAIRO.LoaderMessagesIndex >= window.CAIRO.LoaderMessages.length) {
+          window.CAIRO.LoaderMessagesIndex = 0;
+        }
+      }, 7000);
+
+      sendRavenMessages();
+    }, 20000);
+
+    window.CAIRO.LoaderTimerLong = setTimeout(function () {
+      console.log('Really really slow network here')
+      RavenLoaderMessages.push('Really really slow network here');
+      sendRavenMessages();
+    }, 60000);
+
+    function sendRavenMessages() {
+      console.log('raven loaded')
+      while (window.RavenLoaderMessages.length > 0) {
+        if (window.Raven) {
+          var message = window.RavenLoaderMessages.pop();
+          Raven.captureMessage(message);
+        } else {
+          break;
+        }
+      }
+    }
+
+    window.loadRaven = function () {
+      Raven.config('https://827acc4cd4d04b009157881a6939baac@sentry.io/123192').install();
+      setTimeout(sendRavenMessages, 10);
+    }
+  </script>
+
+  <link rel="import" href="/core/cairo-app-shell.html" async>
+  <script src="https://cdn.ravenjs.com/3.8.1/raven.min.js" async onload="window.loadRaven()"></script>
+
+  <!-- Script used to load Polymer and to load webcomponents when needed -->
+  <script>
+      // Setup Polymer options
+      // Based on https://youtu.be/Rd0plknSPYU?t=19m58s
+      // Making Chromsestatus.com a Lightning-fast PWA (Polymer Summit 2016)
+      window.Polymer = {
+        // Use native Shadow DOM (if available)
+        dom: 'shadow',
+
+        // Delay Polymer startup work until instance-time,
+        lazyRegister: 'max'
+      };
+
+      // Setup error tracking before anything else runs.
+      window.onerror = function (message, file, lineNumber, columnNumber, error) {
+        // We don't want to trigger any errors inside window.onerror, so wrap in a try/catch.
+        try {
+          // Some browsers don't support error param yet.
+          if (error !== undefined && error !== null) {
+            message = error.stack;
+          }
+
+          if (window.ga) {
+            ga('send', 'event', 'error', file + ':' + lineNumber, message);
+          }
+
+          if (window.Raven && error) {
+            Raven.captureException(error);
+            // Raven.showReportDialog();
+          } else {
+            console.log(message)
+          }
+        } catch (e) {
+          console.error(e);
+          // no-op
+        }
+      };
+  </script>
+  <style>
+    /* INDEX STYLE STARTS */
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    /* INDEX STYLE ENDS */
+
+    .showbox {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 5%;
+      margin-top: 140px;
+    }
+
+    .showbox.hidden {
+      display: none;
+    }
+
+    .loader {
+      position: relative;
+      margin: 0 auto;
+      width: 100px;
+    }
+
+    .loader:before {
+      content: '';
+      display: block;
+      padding-top: 100%;
+    }
+
+    .circular {
+      animation: rotate 2s linear infinite;
+      height: 100%;
+      transform-origin: center center;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+    }
+
+    .path {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+      animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+      stroke-linecap: round;
+    }
+
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes dash {
+      0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+      }
+      50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+      }
+      100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+      }
+    }
+
+    @keyframes color {
+      100%,
+      0% {
+        stroke: #d62d20;
+      }
+      40% {
+        stroke: #0057e7;
+      }
+      66% {
+        stroke: #008744;
+      }
+      80%,
+      90% {
+        stroke: #ffa700;
+      }
+    }
+
+    .loader-text {
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="showbox" id="showbox">
+    <div class="loader">
+      <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+      </svg>
+    </div>
+    <div class="loader-text" id="loader-text">
+    </div>
+  </div>
+
+  <cairo-app-shell></cairo-app-shell>
+
+  <script>
+      (function (i, s, o, g, r, a, m) {      
+i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'UA-89151399-1', 'auto');
+      ga('send', 'pageview');
+  </script>
+
+<!--
+  <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('sevice-worker.js')
+          .then(function () { console.log("Service Worker Registered"); });
+      }
+
+  </script> -->
+  
+  <script src="/scripts/util.js"></script>
+  <script src="/scripts/elements.js"></script>
+  <script id="sw-registration" src="/scripts/service-worker-registration.js"></script>
+  <script src="/scripts/deferred.js"></script>
+  <script src="/scripts/metrics.js" async></script>
+  <script src="/scripts/bootstrap.js" async></script>  
+</body>
+
+</html>

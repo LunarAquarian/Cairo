@@ -1,0 +1,135 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web-components/cairo-icons/cairo-icons.html">
+<link rel="import" href="../../web-components/cairo-navigation/cairo-navigation.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<!-- Style dependency -->
+<link rel="import" href="cairo-header-style.html">
+
+<dom-module id="cairo-header">
+  <template>
+    <style is="custom-style" include="cairo-header-style">
+       :host {
+        display: block;
+      }
+    </style>
+    <firebase-query id="query" data="{{users}}"></firebase-query>
+    <firebase-auth id="auth" user="{{user}}" provider="google">
+    </firebase-auth>
+    <!-- then the app-header -->
+    <app-header fixed$="[[fixed]]" sticky$="[[sticky]]" condenses$="[[condenses]]" disabled$="[[disabled]]" effects="[[effects]]"
+      effects-config="[[effectsConfig]]" reveals$="[[reveals]]" scroll-target="[[scrollTarget]]" shadow$="[[shadow]]" threshold="[[treshold]]"
+      threshold-triggered="[[tresholdTriggered]]">
+      <app-toolbar>
+        <!-- Drawer button -->
+        <paper-icon-button icon="default:menu" class$="hide-on-tablet-landscape-up drawer-toggle-button [[_scrollProgressChangedForDrawerToggleButton(scrollProgress)]]"
+          on-tap="_toggleDrawer">
+        </paper-icon-button>
+
+        <div main-title>cairo</div>
+
+        <!-- Navigation -->
+        <cairo-navigation navigation-list="[[navigationList]]" user="{{user}}" route="[[route]]"></cairo-navigation>
+        <firebase-document id="authDocument" data="{{userData}}"> </firebase-document>
+
+        <template is="dom-if" if="[[!user]]">
+          <paper-button on-tap="login">
+            Login
+          </paper-button>
+        </template>
+
+        <template is="dom-if" if="[[user]]">
+          <paper-button on-tap="logout">
+            Logout
+          </paper-button>
+        </template>
+
+      </app-toolbar>
+    </app-header>
+    <paper-toast id="toaster"></paper-toast>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'cairo-header',
+
+      properties: {
+
+        user: {
+          type: Object,
+          notify: true,
+          value: false
+        },
+
+        navigationList: {
+          type: Array,
+          value: function () { return []; }
+        },
+        // user: {
+        //   type: Object,
+        //   notify: true
+        // },
+        route: {
+          type: String
+        },
+        fixed: {
+          type: Boolean,
+          value: false
+        },
+        shadow: {
+          type: Boolean,
+          value: false
+        },
+        scrollProgress: {
+          type: Number,
+          observer: '_scrollProgressChanged'
+        },
+        scrollProgressThreshold: {
+          type: Number,
+          value: 0
+        }
+      },
+
+      _toggleDrawer: function () {
+        this.fire('toggle-drawer');
+      },
+
+      _scrollProgressChanged: function (scrollProgress) {
+        var appHeader = this.$$('app-header');
+        // var fadeBackgroundEffect = appHeader.createEffect('fade-background');
+        var isCondensed = scrollProgress < this.scrollProgressThreshold;
+        this.shadow = !isCondensed;
+        // fadeBackgroundEffect.run(isCondensed ? 1 : 0);
+      },
+
+      _scrollProgressChangedForDrawerToggleButton: function (scrollProgress) {
+        if (scrollProgress > 0) {
+          return 'drawer-toggle-button-scrolled';
+        }
+      },
+
+      login: function () {
+
+
+        this.$$('#auth').signInWithPopup().then((result) => {
+          // this.userData.displayName = result.user.displayName;
+          // this.userData.email = result.user.email;
+          this.$.query.ref.push({ Users: result.user.displayName });
+          this.$$('#toaster').show('Hello ' + result.user.displayName);
+        });
+      },
+      logout: function () {
+        this.$$('#auth').signOut().then(() => {
+          this.$.toaster.show('Goodbye!')
+        })
+      },
+    });
+  </script>
+</dom-module>

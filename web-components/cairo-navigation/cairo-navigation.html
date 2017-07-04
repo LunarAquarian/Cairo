@@ -1,0 +1,75 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- Style dependency -->
+<link rel="import" href="cairo-navigation-style.html">
+
+<dom-module id="cairo-navigation">
+  <template>
+    <style is="custom-style" include="cairo-navigation-style">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <template is="dom-if" if="[[!drawer]]">
+      <div class="cairo-navigation-header hide-on-phone">
+        <iron-selector class="horizontal layout" attr-for-selected="route" selected$="[[route]]">
+          <template is="dom-repeat" items="[[navigationList]]">
+              <a route$="[[item.route]]" href$="[[item.url]]" class="cairo-navigation-item">
+                [[item.label]]
+              </a>  
+          </template>
+        </iron-selector>  
+      </div>
+    </template>
+    
+    <template is="dom-if" if="[[drawer]]">
+      <div class="cairo-navigation-drawer">
+        <paper-listbox class="cairo-navigation-drawer-container" attr-for-selected="route" selected$="[[route]]">
+          <template is="dom-repeat" items="[[navigationList]]">
+            <a href$="[[item.url]]" class="cairo-navigation-item">
+              <paper-item route$="[[item.route]]" on-tap="_toggleDrawer">
+                [[item.label]]
+              </paper-item>
+            </a>
+          </template>
+        </paper-listbox>
+      </div>
+      
+    </template>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'cairo-navigation',
+
+      properties: {
+        drawer: {
+          type: Boolean,
+          value: false
+        },
+        user: {
+          type: Object,
+          notify: true
+        },
+        route: {
+          type: String             
+        },
+        page: {
+          type: String,
+          reflectToAttribute: true
+        },
+        navigationList: {
+          type: Array,
+          value: function() { return []; }
+        },
+      },
+
+      _toggleDrawer: function() {
+        this.fire('toggle-drawer', {});
+      }
+    });
+  </script>
+</dom-module>

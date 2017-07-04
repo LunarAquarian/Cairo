@@ -1,0 +1,15 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
+app-header {
+  background-color: $brand-primary;
+  color: $gray-dark;
+  
+  app-toolbar {
+    height: $navigation-header-height;
+    
+    span[main-title] {
+      margin-left: $navigation-header-margin-left;
+    }
+  }  
+}

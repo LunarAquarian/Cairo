@@ -1,0 +1,203 @@
+<!-- Polymer Global dependencies -->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/qairoe-app-layout/qairoe-app-layout.html">
+<link rel="import" href="../bower_components/qairoe-app-router/qairoe-app-router.html">
+
+<!-- Custom Element dependencies -->
+<link rel="import" href="../bower_components/polymerfire/firebase-app-script.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth-script.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-database-script.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../web-components/cairo-header/cairo-header.html">
+<link rel="import" href="../web-components/cairo-drawer/cairo-drawer.html">
+
+
+<!--
+`<cairo-app-shell>` is the main core element called in the index.html that
+renders the pages.
+
+Currently we have hard-coded the pages, they are lazily loaded inside the dom-module
+
+In typical use, just slap some `<cairo-app-shell>` at the top of your body:
+
+    <body>
+      <cairo-app-shell></cairo-app-shell>
+
+Wham! It's all awesome now!
+-->
+<dom-module id="cairo-app-shell">
+  <!-- Lazy loaded dependencies -->
+  <!-- LAZY LOADER STARTS HERE -->
+  <link rel="lazy-import" href="/pages/home-page/home-page.html" group="home-page">
+  <link rel="lazy-import" href="/pages/first-page/first-page.html" group="first-page">
+  <link rel="lazy-import" href="/pages/second-page/second-page.html" group="second-page">
+  <link rel="lazy-import" href="/pages/view-page/view-page.html" group="view-page">
+  <link rel="lazy-import" href="/pages/edit-page/edit-page.html" group="edit-page">
+  <link rel="lazy-import" href="/pages/not-authorized-page/not-authorized-page.html" group="not-authorized-page">
+  <link rel="lazy-import" href="/pages/not-found-page/not-found-page.html" group="not-found-page">
+  <!-- LAZY LOADER ENDS HERE -->
+
+  <template>
+    <style is="custom-style">
+    </style>
+
+    <firebase-app 
+      auth-domain="[[config.authDomain]]"
+      database-url="[[config.databaseURL]]"
+      api-key="[[config.apiKey]]">
+    </firebase-app>
+
+    <qairoe-app-layout scroll-progress="{{scrollProgress}}">
+
+      <cairo-header 
+        main-header 
+        scroll-progress="{{scrollProgress}}"
+        route="[[currentRoute]]"
+        user="{{user}}"></cairo-header>
+      <cairo-drawer 
+        main-drawer 
+        navigation-list="[[navigationList]]" 
+        scroll-progress="{{scrollProgress}}"
+        route="[[currentRoute]]" 
+        user="{{user}}"></cairo-drawer>
+
+      <qairoe-app-router
+          main-content
+          current-route="{{currentRoute}}"
+          parent-tag-name="cairo-app-shell"
+          on-view-loaded="viewLoaded">
+
+        <!-- ROUTER STARTS HERE -->
+        <home-page route="/"></home-page>
+        <first-page route="/first"></first-page>
+        <second-page route="/second"></second-page>
+        <view-page route="/view/:id" user="[[user]]"></view-page>
+        <edit-page route="/edit/:id" user="[[user]]"></edit-page>
+        <not-authorized-page route="not-authorized"></not-authorized-page>
+        <not-found-page route="not-found"></not-found-page>
+        <!-- ROUTER ENDS HERE -->
+
+      </qairoe-app-router>
+    </qairoe-app-layout>
+
+  </template>
+  <script>
+    /*global Polymer*/
+     var config = {
+      apiKey: "AIzaSyBfIuWB-n_h3sXiIfFgw5bsj3bmaz6Ill8",
+      authDomain: "poly-461b2.firebaseapp.com",
+      databaseURL: "https://poly-461b2.firebaseio.com",
+    };
+  
+    Polymer({
+      is: 'cairo-app-shell',
+
+      properties: {
+         config: {
+          type: Object,
+          readOnly: true,
+          value: function() { return config; }
+        },
+        navigationList: {
+          type: Array,
+          readOnly: true,
+          value: function() {
+            return [
+              {
+                label: 'Home',
+                url: '/'
+              },
+              {
+                label: 'First Page',
+                url: '/first'
+              },
+              {
+                label: 'Second Page',
+                url: '/second'
+              }
+            ];
+          }
+        },
+        scrollProgress: {
+          type: Number
+        },
+        user: {
+          type: Object
+        },
+         signedIn: {
+          type: Boolean,
+          value: false
+        },
+        route: {
+          type: String
+        },
+        app: {
+          type: Object,
+          notify: true,
+          value: function () {
+            return {};
+          }
+        },
+      },
+
+       _authChanged: function(user) {
+        this.signedIn = !!user;
+      },
+
+      ready: function() {
+
+        Polymer.RenderStatus.afterNextRender(this, function () {
+          if (CAIRO && CAIRO.ServiceWorkerRegistration) {
+            CAIRO.ServiceWorkerRegistration.register();
+          }     
+          this.fire('project-nice-app-shell-ready');         
+        }.bind(this));
+      },
+
+      viewLoaded: function() {
+        console.log('loaded')
+        if (CAIRO && CAIRO.Elements && CAIRO.Elements.Loader) {
+          CAIRO.Elements.Loader.style.cssText = "display: none";
+          
+        }
+
+        if (CAIRO.LoaderTimerShort) {
+          clearTimeout(CAIRO.LoaderTimerShort);
+          CAIRO.LoaderTimerShort = null;
+        }
+
+        if (CAIRO.LoaderTimerShorter) {
+          clearTimeout(CAIRO.LoaderTimerShorter);
+          CAIRO.LoaderTimerShorter = null;
+        }
+
+        if (CAIRO.LoaderTimer) {
+          console.log('clearing timer')
+          clearTimeout(CAIRO.LoaderTimer);
+          CAIRO.LoaderTimer = null;
+        }
+
+        if (CAIRO.LoaderTimerLong) {
+          clearTimeout(CAIRO.LoaderTimerLong);
+          CAIRO.LoaderTimerLong = null;
+        }
+
+        if (CAIRO.LoaderMessagesInterval) {
+          clearInterval(CAIRO.LoaderMessagesInterval);
+          CAIRO.LoaderMessagesInterval = null
+        }
+
+        if (window.slowNetwork) {
+          try {
+            Raven.captureMessage('Slow loading done', {time: (((new Date()).getTime() - window.slowNetwork.getTime())/ 1000)});
+            window.slowNetwork = null;
+          } catch(e) {
+            Raven.captureError(e);
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>

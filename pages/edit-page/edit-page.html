@@ -1,0 +1,33 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/pwa-15-article/pwa-15-article.html">
+<link rel="import" href="../../web-components/pwa-15-form/pwa-15-form.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="edit-page">
+  <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+      
+      pwa-15-article, pwa-15-form {
+        min-width: 250px;
+      }
+    </style>
+
+    <template is="dom-if" if="[[params.id]]">
+      <div class="horizontal layout wrap">
+        <pwa-15-form class="flex" article-id="[[params.id]]" user="[[user]]"></pwa-15-form>
+        <pwa-15-article class="flex" article-id="[[params.id]]" user="[[user]]"></pwa-15-article>
+      </div>  
+    </template>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'edit-page'
+    });
+  </script>
+</dom-module>

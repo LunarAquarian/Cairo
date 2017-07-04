@@ -1,0 +1,42 @@
+{
+  "entrypoint": "index.html",
+  "shell": "core/cairo-app-shell.html",
+  "fragments": [
+    "pages/home-page/home-page.html",
+    "pages/edit-page/edit-page.html",
+    "pages/view-page/view-page.html",
+    "pages/not-authorized-page/not-authorized-page.html",
+    "pages/not-found-page/not-found-page.html"
+  ],
+  "sourceGlobs": [
+   "core/**/*",
+   "images/**/*",
+   "pages/**/*",
+   "web-components/**/*",
+   "bower.json"
+  ],
+  "includeDependencies": [
+    "bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror-worker.js",
+    "bower_components/app-storage/app-indexeddb-mirror/common-worker-scope.js",
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+  ],
+ "builds": [
+  {
+    "name": "bundled",
+    "bundle": true,
+    "js": {"minify": true},
+    "css": {"minify": true},
+    "html": {"minify": true},   
+    "addServiceWorker": true,
+    "addPushManifest": true,
+    "insertPrefetchLinks": true
+  },
+  {
+    "name": "unbundled",
+    "js": {"minify": true},
+    "css": {"minify": true},
+    "html": {"minify": true}
+  }
+]
+}

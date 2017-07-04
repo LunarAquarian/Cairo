@@ -1,0 +1,112 @@
+// Put your mixins for Project Nice here
+
+@import 'variables';
+
+////////// Phone Only ///////////////
+
+@mixin phone-only {
+  @media (max-width: map-get($grid-breakpoints, phone) - 1) { @content; }
+}
+
+///////// Tablet Portrait Up ////////
+
+@mixin tablet-portrait-up {
+  @media (min-width: map-get($grid-breakpoints, phone)) { @content; }
+}
+
+///////// Tablet Portrait Only //////
+
+@mixin tablet-portrait-only {
+  @media (min-width: map-get($grid-breakpoints, phone)) and (max-width: map-get($grid-breakpoints, tabletportrait) - 1) { @content; }
+}
+
+///////// Tablet Landscape Up ///////
+
+@mixin tablet-landscape-up {
+  @media (min-width: map-get($grid-breakpoints, tabletportrait)) { @content; }
+}
+
+///////// Tablet Landscape Only /////
+
+@mixin tablet-landscape-only {
+  @media (min-width: map-get($grid-breakpoints, tabletportrait)) and (max-width: map-get($grid-breakpoints, tabletlandscape) - 1) { @content; }
+}
+
+///////// Tablet Only ///////////////
+
+@mixin tablet-only {
+  @media (min-width: map-get($grid-breakpoints, phone)) and (max-width: map-get($grid-breakpoints, tabletlandscape) - 1) { @content; }
+}
+
+///////// Desktop Up ////////////////
+
+@mixin desktop-up {
+  @media (min-width: map-get($grid-breakpoints, tabletlandscape)) { @content; }
+}
+
+///////// Desktop Only //////////////
+
+@mixin desktop-only {
+  @media (min-width: map-get($grid-breakpoints, tabletlandscape)) and (max-width: map-get($grid-breakpoints, desktop) - 1) { @content; }
+}
+
+///////// Big Desktop Up ////////////
+
+@mixin big-desktop-up {
+  @media (min-width: map-get($grid-breakpoints, desktop)) { @content; }
+}
+
+
+///////// Visibility ///////////////
+
+@mixin hide-on-phone-only() {
+  .hide-on-phone-only {
+    @include phone-only {
+      display: none;
+    }
+  }
+}
+
+@mixin hide-on-tablet-up() {
+  .hide-on-tablet-up {
+    @include tablet-portrait-up {
+      display: none;
+    }
+  }
+}
+
+@mixin hide-on-tablet-landscape-up() {
+  .hide-on-tablet-landscape-up {
+    @include tablet-landscape-up {
+      display: none;
+    }
+  }
+}
+
+@mixin hide-on-desktop-up() {
+  .hide-on-desktop-up {
+    @include desktop-up {
+      display: none;
+    }
+  }
+}
+
+@mixin hide-on-non-desktop() {
+  .hide-on-non-desktop {
+    @include phone-only {
+      display: none;
+    }
+
+    @include tablet-portrait-only {
+      display: none;
+    }
+  }
+}
+
+@mixin flex-wrapper() {
+  .flex-wrapper {
+    width: 100.1%;
+  }
+}
+
+

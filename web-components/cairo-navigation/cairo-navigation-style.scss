@@ -1,0 +1,18 @@
+//
+
+@import 'styles/variables';
+
+.cairo-navigation-header {
+  .cairo-navigation-item {
+    color: $gray-dark;
+    text-decoration: none;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+.cairo-navigation-item {
+  &.iron-selected {
+    font-weight: bold;
+  }
+}
