@@ -1,0 +1,55 @@
+ <!--Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../web-components/pwa-15-article/pwa-15-article.html">
+<link rel="import" href="../../web-components/pwa-15-summary/pwa-15-summary.html">
+<link rel="import" href="../../pages/home-page/home-page.html">
+
+
+
+<dom-module id="pwa-15-comment">
+  <template>
+    <style is="custom-style">
+      :host {
+        display:block;
+        margin:0% auto;
+        width:50%;
+      }
+    </style>
+
+    <firebase-auth id="auth" user="{{user}}">
+<firebase-document
+      path="/articles/[[articleId]]/comments"
+      data="{{comment}}"
+    ></firebase-document>
+    
+       <h3>
+        Top comments
+      </h3>
+    <template is="dom-if" if="[[comment]]">
+        <h2>
+          [[comment.Comment]]
+        </h2>
+    </template> 
+  
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'pwa-15-comment',
+
+       properties: {
+         com: {
+          type: Object
+        }
+      },
+      _getJson: function(myObject) {
+         return String(myObject);
+      }
+
+    });
+  </script>
+</dom-module>

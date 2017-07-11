@@ -17,12 +17,10 @@
        :host {
         display: block;
       }
-      /*#newfeed{
-        margin-top:30px;
-        width:50%;
-        margin-left:300px;
-        margin-bottom:50px;
-      }*/
+       .container{
+         margin: auto;
+         width:60%;
+       }      
     </style>
 
     <!--<firebase-query id="query"
@@ -31,11 +29,12 @@
     ></firebase-query>-->
 
     <firebase-query id="query" path="/articles" data="{{articles}}"></firebase-query>
-    
+
 
     <firebase-auth user="{{user}}"></firebase-auth>
 
     <!--<paper-dialog opened><h2>Header</h2></paper-dialog>-->
+    <div class="container">
 
     <div class="vertical layout">
       <paper-input id="input" class="flex" placeholder="What's on your mind"> </paper-input>
@@ -43,23 +42,40 @@
       <paper-button class="flex" id="post" on-tap="add" raised>POST</paper-button>
     </div>
 
+   
     <template is="dom-repeat" items="[[articles]]">
       <pwa-15-summary article-id="[[item.$key]]"></pwa-15-summary>
     </template>
+  
+
+    </div>
+
   </template>
 
   <script>
     Polymer({
       is: 'home-page',
       add: function () {
-        this.$.query.ref.push({
-          title: this.$.input.value,
-          body: this.$.input1.value
-          // userID:this.$.user.uid
-        });
-        this.$.input1.value = null;
-        this.$.input.value = null;
-      }
-    });
+
+        var user = firebase.auth().currentUser;
+        // var name, email, photoUrl, uid, emailVerified;
+
+        // if (user != null) {
+        //   name = user.displayName;
+        //   email = user.email;
+        //   photoUrl = user.photoURL;
+        //   emailVerified = user.emailVerified;
+        //   uid = user.uid; }
+
+          this.$.query.ref.push({
+            title: this.$.input.value,
+            body: this.$.input1.value,
+            UserID: this.user.uid
+            // userID:this.$.user.uid
+          });
+          this.$.input1.value = null;
+          this.$.input.value = null;
+        }
+      });
   </script>
 </dom-module>

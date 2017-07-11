@@ -9,6 +9,11 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-search/paper-search-bar.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.7/webcomponents-lite.min.js"></script>
+
 
 <!-- Style dependency -->
 <link rel="import" href="cairo-header-style.html">
@@ -16,41 +21,75 @@
 <dom-module id="cairo-header">
   <template>
     <style is="custom-style" include="cairo-header-style">
-       :host {
+       /*:host {
         display: block;
+      }*/
+
+      .menu{
+        display: flex;
+        flex-grow: 1;
+        flex-direction: row;
+        align-items: center;
       }
+       paper-search-bar{
+         flex-grow: 2;
+       }
+       .Log{
+         flex-grow: 1;
+         text-align: right;
+       }
     </style>
-    <firebase-query id="query" data="{{users}}"></firebase-query>
+    
+    <firebase-query id="query" path="/users"></firebase-query>
     <firebase-auth id="auth" user="{{user}}" provider="google">
     </firebase-auth>
+
+   
+    <!--<firebase-auth id="auth1" user="{{user}}" provider="twitter">
+    </firebase-auth>-->
+
     <!-- then the app-header -->
     <app-header fixed$="[[fixed]]" sticky$="[[sticky]]" condenses$="[[condenses]]" disabled$="[[disabled]]" effects="[[effects]]"
       effects-config="[[effectsConfig]]" reveals$="[[reveals]]" scroll-target="[[scrollTarget]]" shadow$="[[shadow]]" threshold="[[treshold]]"
       threshold-triggered="[[tresholdTriggered]]">
       <app-toolbar>
         <!-- Drawer button -->
-        <paper-icon-button icon="default:menu" class$="hide-on-tablet-landscape-up drawer-toggle-button [[_scrollProgressChangedForDrawerToggleButton(scrollProgress)]]"
-          on-tap="_toggleDrawer">
-        </paper-icon-button>
+        <div class="menu">
+          <paper-icon-button icon="default:menu" class$="hide-on-tablet-landscape-up drawer-toggle-button [[_scrollProgressChangedForDrawerToggleButton(scrollProgress)]]"
+            on-tap="_toggleDrawer">
+          </paper-icon-button>
 
-        <div main-title>cairo</div>
+          <div main-title>cairo</div>
+
+        </div>
+
+        <paper-search-bar>
+          
+        </paper-search-bar>
 
         <!-- Navigation -->
         <cairo-navigation navigation-list="[[navigationList]]" user="{{user}}" route="[[route]]"></cairo-navigation>
-        <firebase-document id="authDocument" data="{{userData}}"> </firebase-document>
+        <firebase-document id="authDocument" path="/users/[[usersId]]/Pix" data="{{userData}}"> </firebase-document>
+         <app-indexeddb-mirror key="userAuth" data="{{userData}}" persisted-data="{{user}}">
+         </app-indexeddb-mirror>
 
-        <template is="dom-if" if="[[!user]]">
-          <paper-button on-tap="login">
-            Login
-          </paper-button>
-        </template>
+        <div class="Log">
+          <template is="dom-if" if="[[!user]]">
+            <paper-button on-tap="login">
+              Login
+            </paper-button>
+          </template>
 
-        <template is="dom-if" if="[[user]]">
-          <paper-button on-tap="logout">
-            Logout
-          </paper-button>
-        </template>
+          <template is="dom-if" if="[[user]]">
+            <paper-button on-tap="logout">
+              Logout
+            </paper-button>
+          </template>
+        </div>
 
+        <iron-image style="width:40px; border-radius:50%; height:40px; background-color: lightgray;" sizing="cover" preload fade id="profPic"></iron-image>
+        
+        
       </app-toolbar>
     </app-header>
     <paper-toast id="toaster"></paper-toast>
@@ -114,17 +153,15 @@
           return 'drawer-toggle-button-scrolled';
         }
       },
-
+     
       login: function () {
-
-
         this.$$('#auth').signInWithPopup().then((result) => {
-          // this.userData.displayName = result.user.displayName;
-          // this.userData.email = result.user.email;
-          this.$.query.ref.push({ Users: result.user.displayName });
-          this.$$('#toaster').show('Hello ' + result.user.displayName);
+          this.$$('#query').ref.push({ Name: result.user.displayName, Pix: result.user.photoURL, UserID: result.user.uid });
+          this.$$('#toaster').show('Hello ' + result.user.displayName);  
+          this.$$('#profPic').setAttribute("src", result.user.photoURL );
         });
       },
+
       logout: function () {
         this.$$('#auth').signOut().then(() => {
           this.$.toaster.show('Goodbye!')
