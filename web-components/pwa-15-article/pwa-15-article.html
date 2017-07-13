@@ -35,26 +35,29 @@
         margin-top: 50px;
       }
 
-      .commentTitle{
-        display:flex;
+      .commentTitle {
+        display: flex;
+        flex-direction: row;
       }
 
-      #commentTime{
-        flex-direction: row;
+      #commentPix {
+        border-radius: 50%;
+      }
+
+      #commentUser {
+        flex-grow: 2;
+        color: burlywood;
+      }
+
+      #commentTime {
         text-align: right;
       }
 
-       #commentUser {
-         flex-grow: 2;
-         color: burlywood;
-       }
       #talk,
       #commentUser {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 20px;
       }
-
-
     </style>
     <firebase-auth id="auth" user="{{user}}">
       <firebase-query id="query" path="/articles/[[articleId]]/comments" data="{{comments}}"></firebase-query>
@@ -64,7 +67,7 @@
       key="article-[[articleId]]"
       data="{{articleLive}}"
       persisted-data="{{article}}">
-    </app-indexeddb-mirror>-->
+      </app-indexeddb-mirror>-->
 
       <div class="viewContainer">
 
@@ -103,16 +106,18 @@
           <paper-button class="flex" raised on-tap="commentate">Comment</paper-button>
         </div>
 
-
-
         <paper-material elevation="2">
           <h2>Comments</h2>
 
-          <template is="dom-repeat" items="[[comments]]" as="comment">
-            <div class="commentTitle"> <span id="commentUser">[[comment.UserName]]</span> <span id="commentTime"> [[comment.TimeStamp]]</span></div>
-            <p id="talk">[[comment.Comment]]</p>
+          <template is="dom-repeat" items="[[comments]]" as="comment" comment-id={{comment.$key}}>
+            <div class="commentTitle"><span id="commentUser">[[comment.UserName]]</span> <span id="commentTime"> [[comment.TimeStamp]]</span></div>
+            <p id="talk">[[comment.Comment]]</p> <input value="[[comment.$key]]" id="pushId">
+            <p>
+              <paper-button raised on-tap="upvote">Upvote</paper-button>
+              <paper-button raised on-tap="downvote">Downvote</paper-button>
+            </p>
+            <!--<pwa-15-comment comment-id={{comment.$key}}></pwa-15-comment>     -->
             <hr>
-            <!--<pwa-15-comment comment-id = "[[comment]]"></pwa-15-comment>-->
           </template>
         </paper-material>
 
@@ -125,6 +130,9 @@
 
 
   <script>
+    let counter = 0;
+    let counter1 = 0;
+
     Polymer({
       is: 'pwa-15-article',
 
@@ -138,19 +146,46 @@
           value: null
         }
       },
-      formatDate:function(x){
+      upvote: function () {
+        var x = this.$$('#pushId').value;
+        votePath = this.$.query.ref.child(x);
+        this.$.query.ref.child(x).once("value")
+          .then(function (snapshot) {
+            var upvotes = snapshot.child("Upvotes").val();
+            console.log(upvotes);
+            console.log("upvoted ", x);
+            votePath.update({
+              Upvotes: upvotes + 1
+            })
+          });
 
       },
-
+      downvote: function () {
+        var y = this.$$('#pushId').value;
+        var downPath = this.$.query.ref.child(y);
+         this.$.query.ref.child(y).once("value")
+          .then(function (snapshot) {
+            var downvotes = snapshot.child("Downvotes").val();
+            console.log(downvotes);
+            console.log("downvoted ", y);
+            downPath.update({
+              Downvotes: downvotes + 1
+            })
+          });
+        
+        
+      },
       commentate: function () {
+        var art = this.$.query.ref.getKey();
+        console.log(art);
         var user = firebase.auth().currentUser;
         var dt = new Date();
         var utcDate = dt.toUTCString();
         this.$.query.ref.push({
           UserName: this.user.displayName,
+          UserPix: this.user.photoURL,
           Comment: this.$.comm.value,
           TimeStamp: utcDate
-          // articleID: this.$.articleId.value
         });
         this.$.comm.value = null;
       }

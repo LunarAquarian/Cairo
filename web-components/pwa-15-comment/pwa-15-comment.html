@@ -14,42 +14,32 @@
     <style is="custom-style">
       :host {
         display:block;
-        margin:0% auto;
-        width:50%;
+        /*margin:0% auto;
+        width:50%;*/
       }
     </style>
 
     <firebase-auth id="auth" user="{{user}}">
-<firebase-document
-      path="/articles/[[articleId]]/comments"
-      data="{{comment}}"
-    ></firebase-document>
-    
-       <h3>
-        Top comments
-      </h3>
-    <template is="dom-if" if="[[comment]]">
-        <h2>
-          [[comment.Comment]]
-        </h2>
+    <firebase-query
+      id="query"
+      path="/articles/[[articleId]]/comments/[[commentId]]"
+      data="{{commentId}}"
+    ></firebase-query>
+
+    <template is="dom-if" if="[[commentId]]">
+         <p> <paper-button raised on-tap="upvote">Upvote</paper-button><paper-button raised on-tap="downvote">Downvote</paper-button></p>
     </template> 
   
-
   </template>
 
   <script>
     Polymer({
       is: 'pwa-15-comment',
-
        properties: {
-         com: {
+         commentId: {
           type: Object
         }
-      },
-      _getJson: function(myObject) {
-         return String(myObject);
       }
-
     });
   </script>
 </dom-module>
