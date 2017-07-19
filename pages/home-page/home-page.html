@@ -51,8 +51,8 @@
     <div class="container">
 
     <div class="vertical layout">
-      <paper-input id="input" class="flex" placeholder="What's on your mind"> </paper-input>
-      <paper-input id="input1" class="flex" placeholder="What's Really on your mind"></paper-input>
+      <paper-input id="input1" class="flex" placeholder="What's on your mind"> </paper-input>
+      <paper-input id="input2" class="flex" placeholder="What's Really on your mind"></paper-input>
       <paper-button class="flex" id="post" on-tap="add" raised>POST</paper-button>
     </div>
 
@@ -72,26 +72,16 @@
   <script>
     Polymer({
       is: 'home-page',
+
       add: function () {
-
         var user = firebase.auth().currentUser;
-        // var name, email, photoUrl, uid, emailVerified;
-
-        // if (user != null) {
-        //   name = user.displayName;
-        //   email = user.email;
-        //   photoUrl = user.photoURL;
-        //   emailVerified = user.emailVerified;
-        //   uid = user.uid; }
-
           this.$.query.ref.push({
-            title: this.$.input.value,
-            body: this.$.input1.value,
+            title: this.$$('#input1').value,
+            body: this.$$('#input2').value,
             UserID: this.user.uid
-            // userID:this.$.user.uid
           });
-          this.$.input1.value = null;
-          this.$.input.value = null;
+          this.$$('#input1').value = null;
+          this.$$('#input2').value = null;
         },
          login: function () {
         this.$$('#auth').signInWithPopup().then((result) => {
@@ -105,10 +95,8 @@
 
       checkUser: function (userId) {
         var userkey= this.$$('#userkey').value;
-        var userpath = this.$.query1.ref;
-        // var x= this.$.query1.ref.child(userkey).child(userId);
-        // console.log(x);
-        this.$.query1.ref.child(userkey).child(userId).once('value', function (snapshot) {
+        var userpath = this.$$('#query1').ref;
+        this.$$('#query1').ref.child(userkey).child(userId).once('value', function (snapshot) {
           var exists = (snapshot.val() !== null);
           if (!exists) {
             var user = firebase.auth().currentUser;
@@ -117,7 +105,7 @@
             userpath.push({ Name: username, Pix: userpix, UserID: userId });
           }
           if (exists) {
-            this.$.toaster.show('Welcome Back')
+            this.$.toaster.show('Welcome Back');
           }
         });
       }
