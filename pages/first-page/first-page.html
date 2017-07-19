@@ -1,5 +1,8 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 
 <!-- Style dependency -->
 <link rel="import" href="first-page-style.html">
@@ -11,13 +14,26 @@
         display: block;
       }
     </style>
-
+   <firebase-auth id="auth" user="{{user}}">
+   <!-- <firebase-query id="query" path="/users" data="{{user}}"></firebase-query> -->
+   <!-- <firebase-document path="/users" data="{{user}}"></firebase-document> -->
+    <!-- <script>
+      var user = firebase.auth().currentUser;
+    </script> -->
+    <template is="dom-if" if="[[user]]">
     <div class="card">
       <div class="circle">3</div>
-      <h1>View Three</h1>
+      <h1>[[user.displayName]]</h1>
+      <img src="[[user.photoURL]]">
+      <br/>
       <p>Ut labores minimum atomorum pro. Laudem tibique ut has.
       <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
     </div>
+    </template>
+
+    <template is="dom-if" if="[[!user]]">
+      <h3>Please Login to view your profile</h3>
+    </template>
   </template>
 
   <script>

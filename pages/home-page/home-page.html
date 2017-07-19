@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <!-- Style dependency -->
@@ -30,10 +31,23 @@
 
     <firebase-query id="query" path="/articles" data="{{articles}}"></firebase-query>
 
+    <firebase-query id="query1" path="/users" data="{{query1}}"></firebase-query>
+    <firebase-auth id="auth" user="{{user}}" provider="google"></firebase-auth>
 
-    <firebase-auth user="{{user}}"></firebase-auth>
+    <template is="dom-if" if="[[!user]]">
+      <paper-button raised on-tap="login">
+              Login
+      </paper-button>
+            <paper-toast id="toaster"></paper-toast>
+    </template>
 
+    <template is="dom-repeat" items="[[query1]]" as="userkey" userkey-id={{userkey.$key}}>
+      <input type="text" value="[[userkey.$key]]" id="userkey">
+    </template>
+
+   <template is="dom-if" if="[[user]]">
     <!--<paper-dialog opened><h2>Header</h2></paper-dialog>-->
+
     <div class="container">
 
     <div class="vertical layout">
@@ -46,9 +60,12 @@
     <template is="dom-repeat" items="[[articles]]">
       <pwa-15-summary article-id="[[item.$key]]"></pwa-15-summary>
     </template>
+    </div>
+
+   </template>
   
 
-    </div>
+    
 
   </template>
 
@@ -75,7 +92,35 @@
           });
           this.$.input1.value = null;
           this.$.input.value = null;
-        }
+        },
+         login: function () {
+        this.$$('#auth').signInWithPopup().then((result) => {
+          // this.$$('#query').ref.push({ Name: result.user.displayName, Pix: result.user.photoURL, UserID: result.user.uid });
+          this.$$('#toaster').show('Hello ' + result.user.displayName);
+          // this.$$('#profPic').setAttribute("src", result.user.photoURL);
+          userId = result.user.uid;
+          this.checkUser(userId);
+        });
+      },
+
+      checkUser: function (userId) {
+        var userkey= this.$$('#userkey').value;
+        var userpath = this.$.query1.ref;
+        // var x= this.$.query1.ref.child(userkey).child(userId);
+        // console.log(x);
+        this.$.query1.ref.child(userkey).child(userId).once('value', function (snapshot) {
+          var exists = (snapshot.val() !== null);
+          if (!exists) {
+            var user = firebase.auth().currentUser;
+            var username = user.displayName;
+            var userpix = user.photoURL;
+            userpath.push({ Name: username, Pix: userpix, UserID: userId });
+          }
+          if (exists) {
+            this.$.toaster.show('Welcome Back')
+          }
+        });
+      }
       });
   </script>
 </dom-module>

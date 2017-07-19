@@ -21,30 +21,32 @@
 <dom-module id="cairo-header">
   <template>
     <style is="custom-style" include="cairo-header-style">
-       /*:host {
+      /*:host {
         display: block;
       }*/
 
-      .menu{
+      .menu {
         display: flex;
         flex-grow: 1;
         flex-direction: row;
         align-items: center;
       }
-       paper-search-bar{
-         flex-grow: 2;
-       }
-       .Log{
-         flex-grow: 1;
-         text-align: right;
-       }
+
+      paper-search-bar {
+        flex-grow: 2;
+      }
+
+      .Log {
+        flex-grow: 1;
+        text-align: right;
+      }
     </style>
-    
+
     <firebase-query id="query" path="/users"></firebase-query>
     <firebase-auth id="auth" user="{{user}}" provider="google">
     </firebase-auth>
 
-   
+
     <!--<firebase-auth id="auth1" user="{{user}}" provider="twitter">
     </firebase-auth>-->
 
@@ -64,21 +66,21 @@
         </div>
 
         <paper-search-bar>
-          
+
         </paper-search-bar>
 
         <!-- Navigation -->
         <cairo-navigation navigation-list="[[navigationList]]" user="{{user}}" route="[[route]]"></cairo-navigation>
         <firebase-document id="authDocument" path="/users/[[usersId]]/Pix" data="{{userData}}"> </firebase-document>
-         <app-indexeddb-mirror key="userAuth" data="{{userData}}" persisted-data="{{user}}">
-         </app-indexeddb-mirror>
+        <!-- <app-indexeddb-mirror key="userAuth" data="{{userData}}" persisted-data="{{user}}">
+         </app-indexeddb-mirror> -->
 
         <div class="Log">
-          <template is="dom-if" if="[[!user]]">
+          <!-- <template is="dom-if" if="[[!user]]">
             <paper-button on-tap="login">
               Login
             </paper-button>
-          </template>
+          </template> -->
 
           <template is="dom-if" if="[[user]]">
             <paper-button on-tap="logout">
@@ -87,9 +89,10 @@
           </template>
         </div>
 
-        <iron-image style="width:40px; border-radius:50%; height:40px; background-color: lightgray;" sizing="cover" preload fade id="profPic"></iron-image>
-        
-        
+        <!-- <iron-image style="width:40px; border-radius:50%; height:40px; background-color: lightgray;" sizing="cover" preload fade
+          id="profPic" ></iron-image> -->
+
+
       </app-toolbar>
     </app-header>
     <paper-toast id="toaster"></paper-toast>
@@ -153,12 +156,47 @@
           return 'drawer-toggle-button-scrolled';
         }
       },
-     
+
+      // checkForFirstTime: function (userId) {
+      //   this.$$('#query').ref.child('users').child(userId).once('value', function (snapshot) {
+      //     var exists = (snapshot.val() !== null);
+      //     storeNewUser(userId, exists);
+      //   });
+      // },
+
+      // storeNewUser: function (userId, exists) {
+      //   if (!exists) {
+      //     this.$$('#query').ref.push({ Name: [[user.displayName]], Pix: [[user.photoURL]], UserID: userId });
+      //   }
+      //   if (exists) {
+      //     login();
+      //   }
+      // },
+
       login: function () {
         this.$$('#auth').signInWithPopup().then((result) => {
-          this.$$('#query').ref.push({ Name: result.user.displayName, Pix: result.user.photoURL, UserID: result.user.uid });
-          this.$$('#toaster').show('Hello ' + result.user.displayName);  
-          this.$$('#profPic').setAttribute("src", result.user.photoURL );
+          // this.$$('#query').ref.push({ Name: result.user.displayName, Pix: result.user.photoURL, UserID: result.user.uid });
+          this.$$('#toaster').show('Hello ' + result.user.displayName);
+          // this.$$('#profPic').setAttribute("src", result.user.photoURL);
+          userId = result.user.uid;
+          this.checkUser(userId);
+        });
+      },
+
+      checkUser: function (userId) {
+        console.log('checking--');
+        var userpath = this.$.query.ref;
+        this.$$('#query').ref.child('users').child(userId).once('value', function (snapshot) {
+          var exists = (snapshot.val() !== null);
+          if (!exists) {
+            var user = firebase.auth().currentUser;
+            var username = user.displayName;
+            var userpix = user.photoURL;
+            userpath.push({ Name: username, Pix: userpix, UserID: userId });
+          }
+          if (exists) {
+            this.$.toaster.show('Welcome Back')
+          }
         });
       },
 
@@ -166,7 +204,7 @@
         this.$$('#auth').signOut().then(() => {
           this.$.toaster.show('Goodbye!')
         })
-      },
+      }
     });
   </script>
 </dom-module>

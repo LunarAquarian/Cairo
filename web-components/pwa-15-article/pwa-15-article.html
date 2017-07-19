@@ -108,15 +108,8 @@
 
         <paper-material elevation="2">
           <h2>Comments</h2>
-
           <template is="dom-repeat" items="[[comments]]" as="comment" comment-id={{comment.$key}}>
-            <div class="commentTitle"><span id="commentUser">[[comment.UserName]]</span> <span id="commentTime"> [[comment.TimeStamp]]</span></div>
-            <p id="talk">[[comment.Comment]]</p> <input value="[[comment.$key]]" id="pushId">
-            <p>
-              <paper-button raised on-tap="upvote">Upvote</paper-button>
-              <paper-button raised on-tap="downvote">Downvote</paper-button>
-            </p>
-            <!--<pwa-15-comment comment-id={{comment.$key}}></pwa-15-comment>     -->
+            <pwa-15-comment artid={{articleId}} downvotes={{comment.Downvotes}} upvotes={{comment.Upvotes}} commentkey={{comment.$key}} comment={{comment.Comment}} username={{comment.UserName}} timestamp={{comment.TimeStamp}}></pwa-15-comment>     
             <hr>
           </template>
         </paper-material>
