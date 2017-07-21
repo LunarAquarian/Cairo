@@ -1,7 +1,6 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
@@ -10,6 +9,9 @@
     <style is="custom-style">
        :host {
         display: block;
+      }
+      #artdet{
+        padding:5px;
       }
     </style>
     <!--
@@ -24,7 +26,7 @@
 
 
     <template is="dom-if" if="[[title]]">
-      <paper-material>
+      <div id="artdet">
         <h2>
           [[title]]
         </h2>
@@ -36,8 +38,9 @@
           <a href="/edit/[[articleId]]">
             <paper-button raised>Edit</paper-button>
           </a>
+      </div>
         <!--</template>-->
-      </paper-material>
+      <hr id ="hr">
     </template>
   </template>
 
