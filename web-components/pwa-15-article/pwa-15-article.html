@@ -9,30 +9,36 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../pwa-15-comment/pwa-15-comment.html">
+<!-- <link href='https://fonts.googleapis.com/css?family=Alegreya' rel='stylesheet'> -->
+<link href='https://fonts.googleapis.com/css?family=Assistant' rel='stylesheet'>
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
 <dom-module id="pwa-15-article">
   <template>
     <style is="custom-style">
        :host {
+        font-family: "Whitney Cond A", "Alegreya", "Assistant", "Lato", "Lucida Grande", "Lucida Sans Unicode", Tahoma, Sans-Serif;
         display: block;
+        line-height: 2;
+        font-size: 22px;
       }
 
       .viewContainer {
-        width: 50%;
+        width: 80%;
         margin: auto;
       }
 
       .comments {
-        margin-top: 50px;
-        color: black;
-        width: 50%;
-        margin: auto;
+        /* margin-top: 50px; */
+        color: #d31027;
+        /* margin: auto; */
       }
 
       paper-material {
         padding: 5px 5px;
-        margin-top: 50px;
+        margin: 0px auto;
+        width: 70%;
+        background: white;
       }
 
       .commentTitle {
@@ -53,10 +59,28 @@
         text-align: right;
       }
 
+      paper-button {
+        background-color: #f2f2f2;
+        display: inline-block;
+        color: #444;
+        border: 1px solid #CCC;
+        box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        vertical-align: middle;
+        padding: 5px;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+
+
       #talk,
       #commentUser {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 20px;
+        font-family: "Whitney Cond A", "Alegreya", "Assistant", "Lato", "Lucida Grande", "Lucida Sans Unicode", Tahoma, Sans-Serif;
       }
     </style>
     <firebase-auth id="auth" user="{{user}}">
@@ -68,55 +92,64 @@
       data="{{articleLive}}"
       persisted-data="{{article}}">
       </app-indexeddb-mirror>-->
+      <paper-material elevation="2">
 
-      <div class="viewContainer">
+        <div class="viewContainer">
 
-        <template is="dom-if" if="[[article]]">
-          <h1>[[article.title]]</h1>
-          <marked-element markdown="[[article.body]]">
-            <div class="markdown-html"></div>
-          </marked-element>
+          <template is="dom-if" if="[[article]]">
+            <h1>[[article.title]]</h1>
+            <marked-element markdown="[[article.body]]">
+              <div class="markdown-html"></div>
+            </marked-element>
 
-          <a href="/">
-            <paper-button raised>
-              Back
-            </paper-button>
-          </a>
-        </template>
-
-        <template is="dom-if" if="[[!article]]">
-          Loading...
-        </template>
-
-        <template is="dom-if" if="[[user]]">
-          <a href="/edit/[[articleId]]">
-            <paper-button raised>
-              Edit
-            </paper-button>
-          </a>
-        </template>
-      </div>
-      <br/>
-
-
-      <div class="comments">
-
-        <div class="vertical layout">
-          <paper-input id="comm" class="flex" placeholder="What's your take on this?"></paper-input>
-          <paper-button class="flex" raised on-tap="commentate">Comment</paper-button>
-        </div>
-
-        <paper-material elevation="2">
-          <h2>Comments</h2>
-          <template is="dom-repeat" items="[[comments]]" as="comment" comment-id={{comment.$key}}>
-            <pwa-15-comment artid={{articleId}} downvotes={{comment.Upvotes}} upvotes={{comment.Upvotes}} commentkey={{comment.$key}} comment={{comment.Comment}} username={{comment.UserName}} timestamp={{comment.TimeStamp}}></pwa-15-comment>     
-            <hr>
+            <a href="/">
+              <paper-button raised>
+                Back
+              </paper-button>
+            </a>
           </template>
-        </paper-material>
 
-      </div>
+          <template is="dom-if" if="[[!article]]">
+            Loading...
+          </template>
+
+          <template is="dom-if" if="[[user]]">
+            <a href="/edit/[[articleId]]">
+              <paper-button raised>
+                Edit
+              </paper-button>
+            </a>
+          </template>
 
 
+
+
+          <br>
+          <br>
+          <br>
+
+
+          <div class="commentss">
+
+            <div class="vertical layout">
+              <paper-input id="comm" class="flex" placeholder="What's your take on this?"></paper-input>
+              <paper-button class="flex" raised on-tap="commentate">Comment</paper-button>
+            </div>
+            <br>
+            <br>
+
+            <h2 class="comments">Comments</h2>
+            <template is="dom-repeat" items="[[comments]]" as="comment" comment-id={{comment.$key}}>
+              <pwa-15-comment artid={{articleId}} downvotes={{comment.Downvotes}} upvotes={{comment.Upvotes}} commentkey={{comment.$key}}
+                comment={{comment.Comment}} username={{comment.UserName}} timestamp={{comment.TimeStamp}}></pwa-15-comment>
+              <!-- <hr> -->
+            </template>
+
+
+          </div>
+
+        </div>
+      </paper-material>
       <input value="[[articleId]]" type="hidden" id="articleId">
 
   </template>
@@ -139,7 +172,7 @@
           value: null
         }
       },
-      
+
       commentate: function () {
         var art = this.$.query.ref.getKey();
         console.log(art);

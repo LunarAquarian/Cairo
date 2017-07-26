@@ -8,6 +8,9 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-database-script.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-messaging-script.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-storage-script.html">
+<!-- <link href='https://fonts.googleapis.com/css?family=Alegreya' rel='stylesheet'> -->
+<link href='https://fonts.googleapis.com/css?family=Assistant' rel='stylesheet'>
+
 <!-- <link rel="import" href="../../core/cairo-app-shell.html">
 <link rel="import" href="../../web-components/pwa-15-article/pwa-15-article.html">
 <link rel="import" href="../../pages/view-page/view-page.html"> -->
@@ -18,6 +21,7 @@
     <style is="custom-style">
        :host {
         display: block;
+        font-family: "Alegreya", "Assistant", Tahoma, Sans-Serif;
       }
 
       .commentTitle {
@@ -31,11 +35,12 @@
 
       #commentUser {
         flex-grow: 2;
-        color: burlywood;
+        color: #ea384d;
       }
 
       #commentTime {
         text-align: right;
+        font-size: 14px;
       }
 
       #talk,
@@ -44,37 +49,86 @@
         font-size: 20px;
       }
 
-      #votes {
-       font-family: Arial, Helvetica, sans-serif;
-       font-size: 12px; 
+      #votesect {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        display: flex;
+        flex-direction: row;
+        width: 30%;
+        justify-content: space-between;
       }
-</style>
 
 
-     <firebase-auth id="auth" user="{{user}}"> 
 
-     <firebase-query id="query" path="/articles/[[artid]]/comments" data="{{commentk}}"></firebase-query> 
-    
-     <!-- <firebase-document
+      #votes1 {
+        display: inline-block;
+        color: #444;
+        border: 1px solid #CCC;
+        background-color: #f2f2f2;
+        box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        vertical-align: middle; 
+        padding: 5px;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      #votes2 {
+        background-color: #f2f2f2;
+         display: inline-block;
+        color: #444;
+        border: 1px solid #CCC;
+        box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        vertical-align: middle; 
+        padding: 5px;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      /* #upbutt {
+        border-right: 1px solid #a2a2a2;
+      }
+
+      #downbutt {
+        border-right: 1px solid #a2a2a2;
+      } */
+
+      #communit {
+        border-left: 1px solid #a2a2a2;
+        padding-left: 15px;
+      }
+    </style>
+
+
+    <firebase-auth id="auth" user="{{user}}">
+
+      <firebase-query id="query" path="/articles/[[artid]]/comments" data="{{commentk}}"></firebase-query>
+
+      <!-- <firebase-document
       path="/articles/[[articleId]]/comments/[[commentkey]]"
       data="{{commentkey}}"
     ></firebase-document>  -->
-    
-      
 
-    <template is="dom-if" if="[[commentkey]]">
-      <div class="commentTitle"><input type="text" value="[[artid]]"><span id="commentUser">[[username]]</span> <span id="commentTime"> [[timestamp]]</span></div>
-      <p id="talk">[[comment]]</p> <input value="[[commentkey]]" id="pushId">
-      <p>
-        <paper-button raised on-tap="upvote">Upvote</paper-button><span id="votes">[[upvotes]]</span>
-        <paper-button raised on-tap="downvote">Downvote</paper-button><span id="votes">[[downvotes]]</span>
-      </p>
-    </template>
+
+      <div id="communit">
+        <template is="dom-if" if="[[commentkey]]">
+          <div class="commentTitle"><input type="hidden" value="[[artid]]"><span id="commentUser">[[username]]</span> <span id="commentTime"> [[timestamp]]</span></div>
+          <p id="talk">[[comment]]</p> <input type="hidden" value="[[commentkey]]" id="pushId">
+
+          <span id="votesect">
+        <div id="votes1"><span id="upbutt"><paper-button on-tap="upvote">Upvote</paper-button></span><span>[[upvotes]]</span></div>
+      <div id="votes2"><span id="downbutt"><paper-button on-tap="downvote">Downvote</paper-button></span><span>[[downvotes]]</span></div>
+      </span>
+
+      <p></p>
+
+      </template>
+      </div>
 
   </template>
 
   <script>
-    
     Polymer({
       is: 'pwa-15-comment',
 

@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
@@ -31,22 +32,53 @@
       }
 
       #paper {
-        background-color: #F7F7F7;
+        background-color: white;
+        border-radius: 5px 5px 0px 0px;
       }
 
       paper-fab {
-        --paper-fab-background: #0275d8;
+        --paper-fab-background: linear-gradient(#d31027, #ea384d);
+      }
+
+      #addfab {
         position: fixed;
         right: 10px;
         bottom: 50px;
       }
 
       #newpost {
-        position:fixed;
+        position: fixed;
         right: 10px;
         bottom: 50px;
         display: none;
       }
+
+      .container {
+        display: flex;
+      }
+
+      #news {
+        border-radius: 5px 5px 0px 0px;
+        background: linear-gradient(#d31027, #ea384d);
+        padding: 2px;
+        border-right: 5px solid linear-gradient(#d31027, #ea384d);
+        /* border-bottom: 1px solid #0275d8; 
+         border-left: 1px solid #0275d8;
+          border-top: 1px solid #0275d8; */
+      }
+
+      #numUse {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        position: absolute;
+        top: 50px;
+        left: 200px;
+        background-color:white;
+        border-radius: 5px 5px;
+        border-top:5px solid #edde5d;
+      }
+
     </style>
 
     <!--<firebase-query id="query"
@@ -67,32 +99,51 @@
 
 
     <template is="dom-if" if="[[user]]">
-
+      <br>
+      
       <div class="container">
         <br>
         <br>
 
-        <h3>News Feed</h3>
-        <paper-material id="paper">
-          <template is="dom-repeat" items="[[articles]]">
-            <pwa-15-summary article-id="[[item.$key]]"></pwa-15-summary>
-          </template>
+        <div class="newsfeed">
+          <paper-material id="paper">
+            <div id="news">
+              <p></p>
+            </div>
+            <template is="dom-repeat" items="[[articles]]">
+              <pwa-15-summary article-id="[[item.$key]]"></pwa-15-summary>
+            </template>
+          </paper-material>
+        </div>
+
+
+
+        <paper-dialog id="newpost" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+          <!-- <div class="vertical layout"> -->
+          <paper-input id="input1" class="flex" placeholder="Title" maxlength="300"> </paper-input>
+          <paper-input id="input2" class="flex" placeholder="Body"></paper-input>
+          <paper-button class="flex" id="post" on-tap="add" raised>POST</paper-button>
+          <paper-button raised on-tap="hide">Cancel</paper-button>
+          <!-- <paper-button raised dialog-confirm autofocus>Accept</paper-button> -->
+          <!-- </div> -->
+        </paper-dialog>
+
+        <div id="numUse">
+        <paper-material>
+          <h1>[[articles.length]]</h1>
+          <p>Posts</p>
         </paper-material>
+        </div>
+
+        <paper-fab id="addfab" icon="add" on-tap="shownew"></paper-fab>
+
+
       </div>
+
     </template>
 
-    <paper-dialog id="newpost" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-      <!-- <div class="vertical layout"> -->
-      <paper-input id="input1" class="flex" placeholder="Title"> </paper-input>
-      <paper-input id="input2" class="flex" placeholder="Body"></paper-input>
-      <paper-button class="flex" id="post" on-tap="add" raised>POST</paper-button>
-      <paper-button raised on-tap="hide">Cancel</paper-button>
-      <!-- <paper-button raised dialog-confirm autofocus>Accept</paper-button> -->
-      <!-- </div> -->
-    </paper-dialog>
 
 
-    <paper-fab id="addfab" icon="add" on-tap="shownew"></paper-fab>
 
 
 
@@ -120,7 +171,18 @@
         });
         this.$$('#input1').value = null;
         this.$$('#input2').value = null;
+        this.countpost();
       },
+
+      // countpost: function () {
+      //   var postcount;
+      //   this.$.query.ref.on('value', function (snapshot) {
+      //     postcount = snapshot.numChildren();
+      //     console.log(postcount);
+      //   })
+      //   this.$$('#couser').innerHTML = postcount;
+      // },
+
       login: function () {
         this.$$('#auth').signInWithPopup().then((result) => {
           // this.$$('#query').ref.push({ Name: result.user.displayName, Pix: result.user.photoURL, UserID: result.user.uid });

@@ -1,18 +1,96 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+
 
 <dom-module id="pwa-15-summary">
+
   <template>
     <style is="custom-style">
        :host {
         display: block;
+        border-radius: 2px;
       }
-      #artdet{
-        padding:5px;
+
+      #artdet {
+        padding: 15px;
+        display: flex;
+        flex-direction: row;
+        justify-content:space-between;
+        border-bottom:1px solid #f2f2f2;
+        transition: border-left 200ms ease-in;
       }
+
+      paper-fab{
+        background: linear-gradient(#d31027, #ea384d);
+      }
+
+      #artdet:hover {
+        background: #f2f2f2;
+        /* -webkit-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+        transform: scale(1.1); */
+        background-color:#f2f2f2;
+      }
+
+      #artact {
+        flex-basis:20%; 
+        display:flex;
+        flex-direction: row; 
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      #arttit {
+        justify-content: flex-start;
+          flex-basis:70%;
+      }
+
+       #act{
+         flex-basis:100%;
+         justify-content:space-between;
+        display:flex;
+        flex-direction:row;
+      } 
+
+      #comcom{
+        display:flex;
+        flex-direction:column;
+        align-items: center;
+      }
+
+       #readart{
+         text-decoration: none;
+         transition: background-color 800ms ease-in;
+       }
+
+      #readart:hover{
+        background-color: #0275d8;
+      }
+
+      paper-button {
+        background-color: #f2f2f2;
+        display: inline-block;
+        color: #444;
+        border: 1px solid #CCC;
+        box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        vertical-align: middle;
+        padding: 5px;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      a{
+        text-decoration:none;
+      }
+
     </style>
     <!--
     <firebase-document
@@ -20,33 +98,51 @@
       data="{{title}}"
     ></firebase-document>-->
     <firebase-document user="{{user}}" path="/articles/[[articleId]]/title" data="{{titleLive}}"></firebase-document>
+    <firebase-query id="query" path="/articles/[[articleId]]/comments" data="{{commentk}}"></firebase-query>
 
     <app-indexeddb-mirror key="article-summary-[[articleId]]" data="{{titleLive}}" persisted-data="{{title}}">
     </app-indexeddb-mirror>
 
 
+    <div id="artdet">  
     <template is="dom-if" if="[[title]]">
-      <div id="artdet">
-        <h2>
-          [[title]]
-        </h2>
 
-        <a href="/view/[[articleId]]">
-          <paper-button raised>Read</paper-button>
-        </a>
-        <!--<template is="dom-if" if="[[user]]">-->
+        <div id="arttit">
+          <h2>
+            [[title]]
+          </h2>
+        </div>
+
+        <div id="artact">
+          <div id = "act">
+            <div id="comcom">
+          <paper-fab id= "commfab" label="[[commentk.length]]"></paper-fab>
+          <span>comments</span>
+            </div>
+          <a href="/view/[[articleId]]">
+            <paper-button raised id="readart">Read</paper-button>
+          </a>
+         </div>
+          <template is="dom-if" if="[[user]]">
           <a href="/edit/[[articleId]]">
             <paper-button raised>Edit</paper-button>
           </a>
-      </div>
-        <!--</template>-->
-      <hr id ="hr">
+          </template>
+
+        </div>
+
+      </template>
     </template>
+     </div>
   </template>
+ 
 
   <script>
     Polymer({
-      is: 'pwa-15-summary'
+      is: 'pwa-15-summary',
+      randomCol: function () {
+        this.$$('#artdet').style.borderColor = "#" + ((1 << 24) * Math.random() | 0).toString(16);
+      }
     });
   </script>
 </dom-module>
